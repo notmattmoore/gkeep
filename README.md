@@ -7,7 +7,7 @@ A command-line interface for Google Keep.
 Requires [`gkeepapi`](https://github.com/kiwiz/gkeepapi).
 ```sh
 pip install gkeepapi
-git clone ...
+git clone https://github.com/notmattmoore/gkeep
 chmod +x gkeep.py
 ```
 
