@@ -1,38 +1,6 @@
 #!/usr/bin/python3
-# gkeep: command-line interface to Google Keep
-# Usage: gkeep <cmd>
-# Where cmd is one of
-# - ls [--deleted] [--archived] [--case-sensitive] [pattern]
-#     List notes. Accepts optional Python regular expression (ignores case by
-#     default, pass --case-sensitive to disable). If --deleted or --archived is
-#     passed, then also show deleted or archived notes, respectively.
-# - find [--deleted] [--archived] [--case-sensitive] <pattern>
-#     Search notes using a Python regular expression (ignores case by default, pass
-#     --case-sensitive to disable). If --deleted or --archived is passed, then also
-#     show deleted or archived notes, respectively.
-# - new [--list] <note title>
-#     Create a new note (option --list creates a list).
-# - rm|delete <note spec>
-#     Delete note by title or ID.
-# - archive <note spec>
-#     Toggle archive status of note by title or ID.
-# - pin <note spec>
-#     Toggle pinned status of note by title or ID.
-# - add <note spec> <item> [...]
-#     Add checklist items (specified by sequence of strings) to note specified by
-#     title or ID. A parent item may be specified with --parent <parent item>.
-# - checkoff <note spec> <item> [...]
-#     Check off checklist items (specified by sequence of strings) from note
-#     specified by title or ID.
-# - remove <note spec> <item> [...]
-#     Remove (delete) checklist items (specified by sequence of strings) from note
-#     specified by title or ID.
-# - edit [--list] <note spec>
-#     Edit a note. If note doesn't exist, then create a new one (pass --list to
-#     create a new list).
-# - cat|dump <note spec>
-#     Print note (specified by title or ID) contents to stdout.
-# Version: 2026-07-31
+__description__ = "command-line interface to Google Keep"
+__version__ = "2026-08-13"
 
 CONFIG_FILE = "~/.binrc/gkeep.toml"
 CONFIG_FILE_ALT = "~/.config/gkeep.toml"
@@ -489,7 +457,8 @@ def cat(note_spec, do_format_list=True):  # {{{
 
 if __name__ == "__main__":  # {{{1
   # argument parsing {{{
-  parser = argparse.ArgumentParser(description="command-line interface to Google Keep")
+  parser = argparse.ArgumentParser(description=__description__)
+  parser.add_argument("--version", "-v", action="version", version="%(prog)s " + __version__)
   sub = parser.add_subparsers(dest="command", required=True)
 
   # ls
