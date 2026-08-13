@@ -94,7 +94,7 @@ def ls(r='', re_flags=re.IGNORECASE, trashed=False, archived=False):  # {{{
   notes_match = []
   for n in KEEP.all():
     if r.search(n.title) is not None:
-      if not (n.trashed or n.archived): 
+      if not (n.trashed or n.archived):
         notes_match.append(n)
       elif (n.trashed and trashed) or (n.archived and archived):
         notes_match.append(n)
@@ -200,7 +200,7 @@ def mv(note_spec, title_new): # {{{
     error_and_exit(f"not renaming '{note.title}' since note '{title_new}' already exists")
 
   note.title = title_new
- 
+
   return note
 #----------------------------------------------------------------------------}}}
 def cp(note_spec, title_new): # {{{
@@ -336,6 +336,13 @@ def note_str(note, do_format_list=True):  # {{{
     return format_list(note.items)
   else:
     return note.text
+#----------------------------------------------------------------------------}}}
+def cat(note_spec, do_format_list=True):  # {{{
+  """Print the contents of note (specified by title or ID) to stdout."""
+
+  note = note_get(note_spec)
+  print(note_str(note, do_format_list=do_format_list), file=sys.stdout)
+  return note
 #----------------------------------------------------------------------------}}}
 def _parse_list_recurse(item_lines, i=0, indent=0): # {{{
   """Recursion helper for parse_list(). Takes the list of item lines, the current
@@ -619,6 +626,15 @@ if __name__ == "__main__":  # {{{1
   )
   parser_remove.add_argument("items", nargs="+")
 
+  # cat | dump
+  parser_cat = sub.add_parser(
+    "cat", aliases=["dump"],
+    help="Print note (specified by title or ID) contents to stdout."
+  )
+  parser_cat.set_defaults(command="cat")
+  parser_cat.add_argument("note_spec", help="The title or ID of the note to cat.")
+
+
   # edit
   parser_edit = sub.add_parser(
     "edit",
@@ -628,14 +644,6 @@ if __name__ == "__main__":  # {{{1
   parser_edit.add_argument("--list", action="store_true")
   parser_edit.add_argument("note_spec", help="The title or ID of the note to edit.")
 
-  # cat | dump
-  parser_cat = sub.add_parser(
-    "cat", aliases=["dump"],
-    help="Print note (specified by title or ID) contents to stdout."
-  )
-  parser_cat.set_defaults(command="cat")
-  parser_cat.add_argument("note_spec", help="The title or ID of the note to cat.")
- 
   args = parser.parse_args()
   #----------------------------------------------------------------------------}}}
 

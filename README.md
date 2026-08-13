@@ -84,11 +84,11 @@ Below, `<note>` can be either the title of the note or the ID.
 - `gkeep.py remove <note> <item> [...]`
    Remove (delete) checklist items (specified by sequence of strings) from
    note.
+- `gkeep.py cat|dump <note>`
+   Print note contents to stdout.
 - `gkeep.py edit [--list] <note>`
    Edit note. If note doesn't exist, then create a new one (pass --list to
    create a new list).
-- `gkeep.py cat|dump <note>`
-   Print note contents to stdout.
 
 #### Searching notes
 ```sh
