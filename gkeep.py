@@ -533,21 +533,23 @@ if __name__ == "__main__":  # {{{1
   )
   parser_rm.set_defaults(command="rm")
 
-  # archive
+  # archive | unarchive
   parser_archive = sub.add_parser(
-    "archive", help="Toggle archive status of note by title or ID."
+    "archive", aliases=["unarchive"], help="Toggle archive status of note by title or ID."
   )
   parser_archive.add_argument(
     "note_spec", help="The title or ID of the note to archive/unarchive."
   )
+  parser_archive.set_defaults(command="archive")
 
-  # pin
+  # pin | unpin
   parser_pin = sub.add_parser(
-    "pin", help="Toggle pinned status of note by title or ID."
+    "pin", aliases=["unpin"], help="Toggle pinned status of note by title or ID."
   )
   parser_pin.add_argument(
     "note_spec", help="The title or ID of the note to pin/unpin."
   )
+  parser_pin.set_defaults(command="pin")
 
   # mv | rename
   parser_mv = sub.add_parser(

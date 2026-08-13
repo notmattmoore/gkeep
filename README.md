@@ -68,9 +68,9 @@ Below, `<note>` can be either the title of the note or the ID.
    Create a new note (option --list creates a list).
 - `gkeep.py rm|delete <note>`
    Delete note.
-- `gkeep.py archive <note>`
+- `gkeep.py archive|unarchive <note>`
    Toggle archive status of note.
-- `gkeep.py pin <note>`
+- `gkeep.py pin|unpin <note>`
    Toggle pinned status of note.
 -  `gkeep.py mv <note> <new_title>`
    Rename note.
