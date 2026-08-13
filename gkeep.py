@@ -488,14 +488,46 @@ def edit(note_spec, new_list=False):  # {{{
 
   return note
 #----------------------------------------------------------------------------}}}
-def cat(note_spec, do_format_list=True):  # {{{
-  """Print the contents of note (specified by title or ID) to stdout."""
- 
-  note = note_get(note_spec)
-  print(note_str(note, do_format_list=do_format_list), file=sys.stdout)
+def pipe(note_spec, append=False, make_list=False):  # {{{
+  """Read from stdin and write to note. If $append is True, append to existing
+  content instead of overwriting. If note is a list, then interpret each line of
+  input as a checklist item. If $make_list is true and $append is false, then create
+  a list."""
+
+  if sys.stdin.isatty():
+    error_and_exit("no input provided on stdin")
+
+  # find or create note
+  notes = notes_find(note_spec)
+  if len(notes) == 0:
+    note = new(note_spec, make_list=make_list)
+  else:
+    note = note_get(note_spec)
+
+  stdin_content = sys.stdin.read()
+
+  if isinstance(note, List): # checklist note
+    # convert plain text lines into checkboxes, keeping already formatted lines and comments
+    formatted_lines = []
+    for line in stdin_content.splitlines():
+      if re.search(r"^ *(\[.\]|#)", line) is not None:
+        formatted_lines.append(line)
+      else:
+        formatted_lines.append(f"[ ] {line.strip()}")
+    items_stdin = parse_list("\n".join(formatted_lines))
+
+    if append:
+      list_replace(note, parse_list(note_str(note)) + items_stdin)
+    else:
+      list_replace(note, items_stdin)
+  else: # text note
+    if append and note.text:
+      note.text = note.text.rstrip("\n") + "\n" + stdin_content.strip("\n")
+    else:
+      note.text = stdin_content.rstrip("\n")
+
   return note
 #----------------------------------------------------------------------------}}}
-
 
 if __name__ == "__main__":  # {{{1
   # argument parsing {{{
@@ -634,7 +666,6 @@ if __name__ == "__main__":  # {{{1
   parser_cat.set_defaults(command="cat")
   parser_cat.add_argument("note_spec", help="The title or ID of the note to cat.")
 
-
   # edit
   parser_edit = sub.add_parser(
     "edit",
@@ -643,6 +674,20 @@ if __name__ == "__main__":  # {{{1
   )
   parser_edit.add_argument("--list", action="store_true")
   parser_edit.add_argument("note_spec", help="The title or ID of the note to edit.")
+
+  # pipe | read
+  parser_pipe = sub.add_parser(
+    "pipe", aliases=["read"],
+    help="Read stdin and pipe it to the specified note (overwrite by default). If "
+         "note is already a list, then interpret lines as todo items (input can "
+         "also be formatted similarly to output from cat). If note does not exist, "
+         "then create it. Pass --list to create a new list, and --append to append "
+         "input to the note."
+  )
+  parser_pipe.add_argument("--append", action="store_true")
+  parser_pipe.add_argument("--list", action="store_true")
+  parser_pipe.add_argument("note_spec", help="The title or ID of the note to edit.")
+  parser_pipe.set_defaults(command="pipe")
 
   args = parser.parse_args()
   #----------------------------------------------------------------------------}}}
@@ -702,10 +747,12 @@ if __name__ == "__main__":  # {{{1
   elif args.command == "remove":
     for i in args.items:
       remove(args.note_spec, i)
-  elif args.command == "edit":
-    edit(args.note_spec, new_list=args.list)
   elif args.command == "cat":
     cat(args.note_spec)
+  elif args.command == "edit":
+    edit(args.note_spec, new_list=args.list)
+  elif args.command == "pipe":
+    pipe(args.note_spec, append=args.append, make_list=args.list)
   else:
     error_and_exit(f"unhandled sequence of arguments encountered!\n  {args}")
 

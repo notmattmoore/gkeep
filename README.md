@@ -89,6 +89,11 @@ Below, `<note>` can be either the title of the note or the ID.
 - `gkeep.py edit [--list] <note>`
    Edit note. If note doesn't exist, then create a new one (pass --list to
    create a new list).
+- `gkeep.py edit [--list] <note>`
+   Read stdin and pipe it to the specified note (overwrite by default). If note
+   is already a list, then interpret lines as items (input can also be formatted
+   similarly to output from cat). If note does not exist, then create it. Pass
+   --list to create a new list, and --append to append input to the note.
 
 #### Searching notes
 ```sh
