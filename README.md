@@ -72,6 +72,8 @@ Below, `<note>` can be either the title of the note or the ID.
    Toggle archive status of note.
 - `gkeep.py pin <note>`
    Toggle pinned status of note.
+-  `gkeep.py mv <note> <new_title>`
+   Rename note.
 - `gkeep.py add <note> <item> [...]`
    Add checklist items (specified by sequence of strings) to note. A parent
    item may be specified with --parent <parent item>.

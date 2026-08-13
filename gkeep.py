@@ -185,6 +185,19 @@ def pin(note_spec):  # {{{
   note.pinned = not note.pinned
   return note
 #----------------------------------------------------------------------------}}}
+def mv(note_spec, title_new): # {{{
+  """Rename note. Make sure that the new title is unique."""
+
+  note = note_get(note_spec)
+
+  # make sure the new title is unique
+  if len(notes_find(title_new)) != 0:
+    error_and_exit(f"not renaming '{note.title}' since note '{title_new}' already exists")
+
+  note.title = title_new
+ 
+  return note
+#----------------------------------------------------------------------------}}}
 
 def require_list(note): # {{{
   """Check whether note is a List and error and exit if it is not."""
@@ -531,6 +544,14 @@ if __name__ == "__main__":  # {{{1
     "note_spec", help="The title or ID of the note to pin/unpin."
   )
 
+  # mv | rename
+  parser_mv = sub.add_parser(
+    "mv", aliases=["rename"], help="Rename note by title or ID."
+  )
+  parser_mv.add_argument("note_spec", help="The title or ID of the note to rename.")
+  parser_mv.add_argument("new_title", help="The new title of the note.")
+  parser_mv.set_defaults(command="mv")
+
   # add
   parser_add = sub.add_parser(
     "add",
@@ -626,6 +647,8 @@ if __name__ == "__main__":  # {{{1
     rm(args.note_spec)
   elif args.command == "archive":
     archive(args.note_spec)
+  elif args.command == "mv":
+    mv(args.note_spec, args.new_title)
   elif args.command == "add":
     for i in args.items:
       add(args.note_spec, i, parent=args.parent)
