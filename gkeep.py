@@ -44,22 +44,22 @@ def error_and_exit(msg, exit_code=1): # {{{1
   raise SystemExit(exit_code)
 #----------------------------------------------------------------------------}}}1
 
-def notes_find(query, deleted=False): # {{{
+def notes_find(query, trashed=False): # {{{
   """Return array with all non-trashed notes with title $query or id $query. Pass
-  deleted=True to include trashed notes as well."""
+  trashed=True to include trashed notes as well."""
 
-  if deleted:
+  if trashed:
     pred = lambda n: query in (n.title, n.id)
   else:
     pred = lambda n: not n.trashed and query in (n.title, n.id)
   return list(filter(pred, KEEP.all()))
 #----------------------------------------------------------------------------}}}
-def note_get(query, deleted=False):  # {{{
+def note_get(query, trashed=False):  # {{{
   """Return the note with title $query. If no such note exists, then interpret $query
   as the note id and return the associated note. If more than one note is to be
   returned, then issue a warning and return the first one."""
 
-  notes = notes_find(query)
+  notes = notes_find(query, trashed=trashed)
   if len(notes) == 0:
     error_and_exit(f"note '{query}' not found")
   if len(notes) > 1:
@@ -85,7 +85,7 @@ def note_info_str(note):  # {{{
 
   return (note_title, f"[{note_info}]", f"(ID: {note_id})")
 #----------------------------------------------------------------------------}}}
-def ls(r='', re_flags=re.IGNORECASE, deleted=False, archived=False):  # {{{
+def ls(r='', re_flags=re.IGNORECASE, trashed=False, archived=False):  # {{{
   """Print note titles. By default lists active (non-trashed, non-archived) notes."""
 
   r = re.compile(r, re_flags)
@@ -96,7 +96,7 @@ def ls(r='', re_flags=re.IGNORECASE, deleted=False, archived=False):  # {{{
     if r.search(n.title) is not None:
       if not (n.trashed or n.archived): 
         notes_match.append(n)
-      elif (n.trashed and deleted) or (n.archived and archived):
+      elif (n.trashed and trashed) or (n.archived and archived):
         notes_match.append(n)
 
   # Pull out the pinned notes to show first.
@@ -114,7 +114,7 @@ def ls(r='', re_flags=re.IGNORECASE, deleted=False, archived=False):  # {{{
   for row in table:
     print(f"{row[0]:<{widths[0]}} {row[1]:<{widths[1]}} {row[2]:<{widths[2]}}")
 #----------------------------------------------------------------------------}}}
-def find(r, re_flags=re.IGNORECASE, deleted=False, archived=False): # {{{
+def find(r, re_flags=re.IGNORECASE, trashed=False, archived=False): # {{{
   """Find notes matching regular expression r (case insensitive by default). Returns
   an array of dictionaries,
     [ {"note": n, "matches": [...]}, ... ],
@@ -124,7 +124,7 @@ def find(r, re_flags=re.IGNORECASE, deleted=False, archived=False): # {{{
 
   results = []
   for n in KEEP.all():
-    if n.trashed and not deleted:
+    if n.trashed and not trashed:
       continue
     if n.archived and not archived:
       continue
@@ -145,13 +145,13 @@ def find(r, re_flags=re.IGNORECASE, deleted=False, archived=False): # {{{
 
   return results
 #----------------------------------------------------------------------------}}}
-def find_print(r, re_flags=re.IGNORECASE, deleted=False, archived=False): # {{{
+def find_print(r, re_flags=re.IGNORECASE, trashed=False, archived=False): # {{{
   """Find and print notes matching regular expression r (case insensitive by
   default)."""
 
   # Print notes with type, status, and ID and put match information in the line
   # after.
-  for res in find(r, re_flags=re_flags, deleted=deleted, archived=archived):
+  for res in find(r, re_flags=re_flags, trashed=trashed, archived=archived):
     (n_title, n_status, n_id) = note_info_str(res["note"])
     m = '\n'.join(f"  {m}" for m in res["matches"])
     print(f"{n_title} {n_status} {n_id}\n{m}")
@@ -483,11 +483,11 @@ if __name__ == "__main__":  # {{{1
   parser_ls = sub.add_parser(
     "ls",
     help="List notes. Accepts optional Python regular expression (ignores case by"
-         " default, pass --case-sensitive to disable). If --deleted or --archived is"
-         " passed, then also show deleted or archived notes, respectively."
+         " default, pass --case-sensitive to disable). If --trashed or --archived is"
+         " passed, then also show trashed or archived notes, respectively."
   )
   parser_ls.add_argument(
-    "--deleted", action="store_true", help="Also list deleted notes."
+    "--trashed", action="store_true", help="Also list trashed notes."
   )
   parser_ls.add_argument(
     "--archived", action="store_true", help="Also list archived notes."
@@ -502,12 +502,12 @@ if __name__ == "__main__":  # {{{1
   parser_find = sub.add_parser(
     "find",
     help="Search notes using a Python regular expression (ignores case by default,"
-         " pass --case-sensitive to disable). If --deleted or --archived is passed,"
-         " then also show deleted or archived notes, respectively."
+         " pass --case-sensitive to disable). If --trashed or --archived is passed,"
+         " then also show trashed or archived notes, respectively."
   )
   parser_find.add_argument(
-    "--deleted",
-    action="store_true", help="Also search deleted notes."
+    "--trashed",
+    action="store_true", help="Also search trashed notes."
   )
   parser_find.add_argument(
     "--archived",
@@ -644,10 +644,10 @@ if __name__ == "__main__":  # {{{1
   # Run command
   if args.command == "ls":
     re_flags = 0 if args.case_sensitive else re.IGNORECASE
-    ls(r=args.pattern, re_flags=re_flags, deleted=args.deleted, archived=args.archived)
+    ls(r=args.pattern, re_flags=re_flags, trashed=args.trashed, archived=args.archived)
   elif args.command == "find":
     re_flags = 0 if args.case_sensitive else re.IGNORECASE
-    find_print(args.pattern, re_flags=re_flags, deleted=args.deleted, archived=args.archived)
+    find_print(args.pattern, re_flags=re_flags, trashed=args.trashed, archived=args.archived)
   elif args.command == "new":
     new(args.note_title, make_list=args.list)
   elif args.command == "rm":
