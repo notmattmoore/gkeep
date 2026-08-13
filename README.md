@@ -83,7 +83,7 @@ Below, `<note>` can be either the title of the note or the ID.
 - `gkeep.py edit [--list] <note>`
    Edit note. If note doesn't exist, then create a new one (pass --list to
    create a new list).
-- `gkeep.py dump <note>`
+- `gkeep.py cat|dump <note>`
    Print note contents to stdout.
 
 #### Searching notes

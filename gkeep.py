@@ -30,7 +30,7 @@
 # - edit [--list] <note spec>
 #     Edit a note. If note doesn't exist, then create a new one (pass --list to
 #     create a new list).
-# - dump <note spec>
+# - cat|dump <note spec>
 #     Print note (specified by title or ID) contents to stdout.
 # Version: 2026-07-31
 
@@ -478,7 +478,7 @@ def edit(note_spec, new_list=False):  # {{{
 
   return note
 #----------------------------------------------------------------------------}}}
-def dump(note_spec, do_format_list=True):  # {{{
+def cat(note_spec, do_format_list=True):  # {{{
   """Print the contents of note (specified by title or ID) to stdout."""
  
   note = note_get(note_spec)
@@ -603,11 +603,13 @@ if __name__ == "__main__":  # {{{1
   parser_edit.add_argument("--list", action="store_true")
   parser_edit.add_argument("note_spec", help="The title or ID of the note to edit.")
 
-  # dump
-  parser_dump = sub.add_parser(
-    "dump", help="Print note (specified by title or ID) contents to stdout."
+  # cat | dump
+  parser_cat = sub.add_parser(
+    "cat", aliases=["dump"],
+    help="Print note (specified by title or ID) contents to stdout."
   )
-  parser_dump.add_argument("note_spec", help="The title or ID of the note to dump.")
+  parser_cat.set_defaults(command="cat")
+  parser_cat.add_argument("note_spec", help="The title or ID of the note to cat.")
  
   args = parser.parse_args()
   #----------------------------------------------------------------------------}}}
@@ -663,8 +665,8 @@ if __name__ == "__main__":  # {{{1
       remove(args.note_spec, i)
   elif args.command == "edit":
     edit(args.note_spec, new_list=args.list)
-  elif args.command == "dump":
-    dump(args.note_spec)
+  elif args.command == "cat":
+    cat(args.note_spec)
   else:
     error_and_exit(f"unhandled sequence of arguments encountered!\n  {args}")
 
