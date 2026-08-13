@@ -647,6 +647,8 @@ if __name__ == "__main__":  # {{{1
     rm(args.note_spec)
   elif args.command == "archive":
     archive(args.note_spec)
+  elif args.command == "pin":
+    pin(args.note_spec)
   elif args.command == "mv":
     mv(args.note_spec, args.new_title)
   elif args.command == "add":
