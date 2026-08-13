@@ -56,14 +56,14 @@ needed after the master token has been obtained.
 ## Usage
 Below, `<note>` can be either the title of the note or the ID.
 
-- `gkeep.py ls [--deleted] [--archived] [--case-sensitive] [pattern]`
+- `gkeep.py ls [--trashed] [--archived] [--case-sensitive] [pattern]`
    List notes. Accepts optional Python regular expression (ignores case by
-   default, pass --case-sensitive to disable). If --deleted or --archived is
-   passed, then also show deleted or archived notes, respectively.
-- `gkeep.py find [--deleted] [--archived] [--case-sensitive] <pattern>`
+   default, pass --case-sensitive to disable). If --trashed or --archived is
+   passed, then also show trashed or archived notes, respectively.
+- `gkeep.py find [--trashed] [--archived] [--case-sensitive] <pattern>`
    Search notes using a Python regular expression (ignores case by default, pass
-   --case-sensitive to disable). If --deleted or --archived is passed, then also
-   show deleted or archived notes, respectively.
+   --case-sensitive to disable). If --trashed or --archived is passed, then also
+   show trashed or archived notes, respectively.
 - `gkeep.py new [--list] <note title>`
    Create a new note (option --list creates a list).
 - `gkeep.py rm|delete <note>`
@@ -74,6 +74,8 @@ Below, `<note>` can be either the title of the note or the ID.
    Toggle pinned status of note.
 -  `gkeep.py mv <note> <new_title>`
    Rename note.
+-  `gkeep.py cp|copy <note> <new_title>`
+   Copy note.
 - `gkeep.py add <note> <item> [...]`
    Add checklist items (specified by sequence of strings) to note. A parent
    item may be specified with --parent <parent item>.
@@ -100,7 +102,7 @@ gkeep.py new "note one"  # text note
 gkeep.py new --list  "note two"  # checklist note
 gkeep.py edit "note three"  # creates a text note if it doesn't exist
 gkeep.py edit --list "note three"  # creates a checklist note if it doesn't exist
-gkeep.py delete "note one"
+gkeep.py rm "note one"
 gkeep.py archive "note two"
 ```
 

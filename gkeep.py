@@ -203,6 +203,23 @@ def mv(note_spec, title_new): # {{{
  
   return note
 #----------------------------------------------------------------------------}}}
+def cp(note_spec, title_new): # {{{
+  """Copy note. Make sure that the new title is unique."""
+
+  note = note_get(note_spec)
+
+  # make sure the new title is unique
+  if len(notes_find(title_new)) != 0:
+    error_and_exit(f"not copying '{note.title}' to '{title_new}' since it already exists")
+
+  note_new = new(title_new, make_list=isinstance(note, List))
+  if isinstance(note, List):
+    list_replace(note_new, parse_list(note_str(note)))
+  else:
+    note_new.text = note.text
+
+  return note_new
+#----------------------------------------------------------------------------}}}
 
 def require_list(note): # {{{
   """Check whether note is a List and error and exit if it is not."""
@@ -559,6 +576,14 @@ if __name__ == "__main__":  # {{{1
   parser_mv.add_argument("new_title", help="The new title of the note.")
   parser_mv.set_defaults(command="mv")
 
+  # cp | copy
+  parser_cp = sub.add_parser(
+    "cp", aliases=["copy"], help="Copy a note by title or ID."
+  )
+  parser_cp.add_argument("note_spec", help="The title or ID of the note to copy.")
+  parser_cp.add_argument("new_title", help="The title of the new note.")
+  parser_cp.set_defaults(command="cp")
+
   # add
   parser_add = sub.add_parser(
     "add",
@@ -658,6 +683,8 @@ if __name__ == "__main__":  # {{{1
     pin(args.note_spec)
   elif args.command == "mv":
     mv(args.note_spec, args.new_title)
+  elif args.command == "cp":
+    cp(args.note_spec, args.new_title)
   elif args.command == "add":
     for i in args.items:
       add(args.note_spec, i, parent=args.parent)
