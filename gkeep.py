@@ -12,7 +12,7 @@
 #     show deleted or archived notes, respectively.
 # - new [--list] <note title>
 #     Create a new note (option --list creates a list).
-# - delete <note spec>
+# - rm|delete <note spec>
 #     Delete note by title or ID.
 # - archive <note spec>
 #     Toggle archive status of note by title or ID.
@@ -196,7 +196,7 @@ def new(title, make_list=False):  # {{{
   else:
     return KEEP.createNote(title, "")
 #----------------------------------------------------------------------------}}}
-def delete(note_spec):  # {{{
+def rm(note_spec):  # {{{
   """Delete the note with the given title or ID."""
 
   note = note_get(note_spec)
@@ -537,11 +537,14 @@ if __name__ == "__main__":  # {{{1
   parser_new.add_argument("--list", action="store_true")
   parser_new.add_argument("note_title", help="The title of the note to create.")
 
-  # delete
-  parser_delete = sub.add_parser("delete", help="Delete note by title or ID.")
-  parser_delete.add_argument(
+  # rm
+  parser_rm = sub.add_parser(
+    "rm", aliases=["delete"], help="Delete note by title or ID."
+  )
+  parser_rm.add_argument(
     "note_spec", help="The title or ID of the note to delete."
   )
+  parser_rm.set_defaults(command="rm")
 
   # archive
   parser_archive = sub.add_parser(
@@ -650,8 +653,8 @@ if __name__ == "__main__":  # {{{1
     find_print(args.pattern, re_flags=re_flags, deleted=args.deleted, archived=args.archived)
   elif args.command == "new":
     new(args.note_title, make_list=args.list)
-  elif args.command == "delete":
-    delete(args.note_spec)
+  elif args.command == "rm":
+    rm(args.note_spec)
   elif args.command == "archive":
     archive(args.note_spec)
   elif args.command == "add":

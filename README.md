@@ -66,7 +66,7 @@ Below, `<note>` can be either the title of the note or the ID.
    show deleted or archived notes, respectively.
 - `gkeep.py new [--list] <note title>`
    Create a new note (option --list creates a list).
-- `gkeep.py delete <note>`
+- `gkeep.py rm|delete <note>`
    Delete note.
 - `gkeep.py archive <note>`
    Toggle archive status of note.
