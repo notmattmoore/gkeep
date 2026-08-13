@@ -190,6 +190,17 @@ def pin(note_spec):  # {{{
   note.pinned = not note.pinned
   return note
 #----------------------------------------------------------------------------}}}
+def trash(note_spec):  # {{{
+  """Toggle trashed status for the note with the given title or ID."""
+
+  note = note_get(note_spec, trashed=True)
+  if note.trashed:
+    note.untrash()
+  else:
+    note.trash()
+
+  return note
+#----------------------------------------------------------------------------}}}
 def mv(note_spec, title_new): # {{{
   """Rename note. Make sure that the new title is unique."""
 
@@ -610,6 +621,16 @@ if __name__ == "__main__":  # {{{1
     "note_specs",  nargs='+', help="The title or ID of the note(s) to pin/unpin."
   )
 
+  # trash | untrash
+  parser_trash = sub.add_parser(
+    "trash", aliases=["untrash"],
+    help="Toggle trashed status of note by title or ID. Accepts multiple notes."
+  )
+  parser_trash.set_defaults(command="trash")
+  parser_trash.add_argument(
+    "note_specs",  nargs='+', help="The title or ID of the note(s) to pin/unpin."
+  )
+
   # mv | rename
   parser_mv = sub.add_parser(
     "mv", aliases=["rename"], help="Rename note by title or ID."
@@ -743,6 +764,9 @@ if __name__ == "__main__":  # {{{1
   elif args.command == "pin":
     for n in args.note_specs:
       pin(n)
+  elif args.command == "trash":
+    for n in args.note_specs:
+      trash(n)
   elif args.command == "mv":
     mv(args.note_spec, args.new_title)
   elif args.command == "cp":

@@ -72,6 +72,8 @@ Below, `<note>` can be either the title of the note or the ID.
    Toggle archive status of note.
 - `gkeep.py pin|unpin <note>`
    Toggle pinned status of note.
+- `gkeep.py trash|untrash <note>`
+   Toggle trashed status of note. Accepts multiple notes.
 -  `gkeep.py mv <note> <new_title>`
    Rename note.
 -  `gkeep.py cp|copy <note> <new_title>`
@@ -85,11 +87,11 @@ Below, `<note>` can be either the title of the note or the ID.
    Remove (delete) checklist items (specified by sequence of strings) from
    note.
 - `gkeep.py cat|dump <note>`
-   Print note contents to stdout.
+   Print note contents to stdout. Accepts multiple notes.
 - `gkeep.py edit [--list] <note>`
    Edit note. If note doesn't exist, then create a new one (pass --list to
    create a new list).
-- `gkeep.py edit [--list] <note>`
+- `gkeep.py pipe|read [--list] <note>`
    Read stdin and pipe it to the specified note (overwrite by default). If note
    is already a list, then interpret lines as items (input can also be formatted
    similarly to output from cat). If note does not exist, then create it. Pass
