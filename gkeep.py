@@ -584,44 +584,44 @@ if __name__ == "__main__":  # {{{1
   parser_rm = sub.add_parser(
     "rm", aliases=["delete"], help="Delete note by title or ID."
   )
+  parser_rm.set_defaults(command="rm")
   parser_rm.add_argument(
     "note_spec", help="The title or ID of the note to delete."
   )
-  parser_rm.set_defaults(command="rm")
 
   # archive | unarchive
   parser_archive = sub.add_parser(
     "archive", aliases=["unarchive"], help="Toggle archive status of note by title or ID."
   )
+  parser_archive.set_defaults(command="archive")
   parser_archive.add_argument(
     "note_spec", help="The title or ID of the note to archive/unarchive."
   )
-  parser_archive.set_defaults(command="archive")
 
   # pin | unpin
   parser_pin = sub.add_parser(
     "pin", aliases=["unpin"], help="Toggle pinned status of note by title or ID."
   )
+  parser_pin.set_defaults(command="pin")
   parser_pin.add_argument(
     "note_spec", help="The title or ID of the note to pin/unpin."
   )
-  parser_pin.set_defaults(command="pin")
 
   # mv | rename
   parser_mv = sub.add_parser(
     "mv", aliases=["rename"], help="Rename note by title or ID."
   )
+  parser_mv.set_defaults(command="mv")
   parser_mv.add_argument("note_spec", help="The title or ID of the note to rename.")
   parser_mv.add_argument("new_title", help="The new title of the note.")
-  parser_mv.set_defaults(command="mv")
 
   # cp | copy
   parser_cp = sub.add_parser(
     "cp", aliases=["copy"], help="Copy a note by title or ID."
   )
+  parser_cp.set_defaults(command="cp")
   parser_cp.add_argument("note_spec", help="The title or ID of the note to copy.")
   parser_cp.add_argument("new_title", help="The title of the new note.")
-  parser_cp.set_defaults(command="cp")
 
   # add
   parser_add = sub.add_parser(
@@ -679,15 +679,15 @@ if __name__ == "__main__":  # {{{1
   parser_pipe = sub.add_parser(
     "pipe", aliases=["read"],
     help="Read stdin and pipe it to the specified note (overwrite by default). If "
-         "note is already a list, then interpret lines as todo items (input can "
-         "also be formatted similarly to output from cat). If note does not exist, "
-         "then create it. Pass --list to create a new list, and --append to append "
-         "input to the note."
+         "note is already a list, then interpret lines as items (input can also be "
+         "formatted similarly to output from cat). If note does not exist, then "
+         "create it. Pass --list to create a new list, and --append to append input "
+         "to the note."
   )
+  parser_pipe.set_defaults(command="pipe")
   parser_pipe.add_argument("--append", action="store_true")
   parser_pipe.add_argument("--list", action="store_true")
   parser_pipe.add_argument("note_spec", help="The title or ID of the note to edit.")
-  parser_pipe.set_defaults(command="pipe")
 
   args = parser.parse_args()
   #----------------------------------------------------------------------------}}}
