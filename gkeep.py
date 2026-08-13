@@ -44,12 +44,17 @@ def error_and_exit(msg, exit_code=1): # {{{1
   raise SystemExit(exit_code)
 #----------------------------------------------------------------------------}}}1
 
-def notes_find(query): # {{{
-  """Return array with all non-trashed notes with title $query or id $query."""
+def notes_find(query, deleted=False): # {{{
+  """Return array with all non-trashed notes with title $query or id $query. Pass
+  deleted=True to include trashed notes as well."""
 
-  return [n for n in KEEP.all() if not n.trashed and query in (n.title, n.id)]
+  if deleted:
+    pred = lambda n: query in (n.title, n.id)
+  else:
+    pred = lambda n: not n.trashed and query in (n.title, n.id)
+  return list(filter(pred, KEEP.all()))
 #----------------------------------------------------------------------------}}}
-def note_get(query):  # {{{
+def note_get(query, deleted=False):  # {{{
   """Return the note with title $query. If no such note exists, then interpret $query
   as the note id and return the associated note. If more than one note is to be
   returned, then issue a warning and return the first one."""
