@@ -582,29 +582,32 @@ if __name__ == "__main__":  # {{{1
 
   # rm | delete
   parser_rm = sub.add_parser(
-    "rm", aliases=["delete"], help="Delete note by title or ID."
+    "rm", aliases=["delete"], help="Delete note by title or ID. Accepts multiple notes."
   )
   parser_rm.set_defaults(command="rm")
   parser_rm.add_argument(
-    "note_spec", help="The title or ID of the note to delete."
+    "note_specs", nargs='+', help="The title or ID of the note(s) to delete."
   )
 
   # archive | unarchive
   parser_archive = sub.add_parser(
-    "archive", aliases=["unarchive"], help="Toggle archive status of note by title or ID."
+    "archive", aliases=["unarchive"],
+    help="Toggle archive status of note by title or ID. Accepts multiple notes."
   )
   parser_archive.set_defaults(command="archive")
   parser_archive.add_argument(
-    "note_spec", help="The title or ID of the note to archive/unarchive."
+    "note_specs", nargs='+',
+    help="The title or ID of the note(s) to archive/unarchive."
   )
 
   # pin | unpin
   parser_pin = sub.add_parser(
-    "pin", aliases=["unpin"], help="Toggle pinned status of note by title or ID."
+    "pin", aliases=["unpin"],
+    help="Toggle pinned status of note by title or ID. Accepts multiple notes."
   )
   parser_pin.set_defaults(command="pin")
   parser_pin.add_argument(
-    "note_spec", help="The title or ID of the note to pin/unpin."
+    "note_specs",  nargs='+', help="The title or ID of the note(s) to pin/unpin."
   )
 
   # mv | rename
@@ -661,10 +664,13 @@ if __name__ == "__main__":  # {{{1
   # cat | dump
   parser_cat = sub.add_parser(
     "cat", aliases=["dump"],
-    help="Print note (specified by title or ID) contents to stdout."
+    help="Print note (specified by title or ID) contents to stdout. "
+         "Accepts multiple notes."
   )
   parser_cat.set_defaults(command="cat")
-  parser_cat.add_argument("note_spec", help="The title or ID of the note to cat.")
+  parser_cat.add_argument(
+    "note_specs", nargs='+', help="The title or ID of the note to cat."
+  )
 
   # edit
   parser_edit = sub.add_parser(
@@ -729,11 +735,14 @@ if __name__ == "__main__":  # {{{1
   elif args.command == "new":
     new(args.note_title, make_list=args.list)
   elif args.command == "rm":
-    rm(args.note_spec)
+    for n in args.note_specs:
+      rm(n)
   elif args.command == "archive":
-    archive(args.note_spec)
+    for n in args.note_specs:
+      archive(n)
   elif args.command == "pin":
-    pin(args.note_spec)
+    for n in args.note_specs:
+      pin(n)
   elif args.command == "mv":
     mv(args.note_spec, args.new_title)
   elif args.command == "cp":
@@ -748,7 +757,8 @@ if __name__ == "__main__":  # {{{1
     for i in args.items:
       remove(args.note_spec, i)
   elif args.command == "cat":
-    cat(args.note_spec)
+    for n in args.note_specs:
+      cat(n)
   elif args.command == "edit":
     edit(args.note_spec, new_list=args.list)
   elif args.command == "pipe":
