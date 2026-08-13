@@ -519,7 +519,7 @@ if __name__ == "__main__":  # {{{1
   parser_new.add_argument("--list", action="store_true")
   parser_new.add_argument("note_title", help="The title of the note to create.")
 
-  # rm
+  # rm | delete
   parser_rm = sub.add_parser(
     "rm", aliases=["delete"], help="Delete note by title or ID."
   )
