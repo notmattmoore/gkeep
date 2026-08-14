@@ -57,45 +57,45 @@ needed after the master token has been obtained.
 Below, `<note>` can be either the title of the note or the ID.
 
 - `gkeep.py ls [--trashed] [--archived] [--case-sensitive] [pattern]`
-   List notes. Accepts optional Python regular expression (ignores case by
-   default, pass --case-sensitive to disable). If --trashed or --archived is
-   passed, then also show trashed or archived notes, respectively.
+  List notes. Accepts optional Python regular expression (ignores case by
+  default, pass --case-sensitive to disable). If --trashed or --archived is
+  passed, then also show trashed or archived notes, respectively.
 - `gkeep.py find [--trashed] [--archived] [--case-sensitive] <pattern>`
-   Search notes using a Python regular expression (ignores case by default, pass
-   --case-sensitive to disable). If --trashed or --archived is passed, then also
-   show trashed or archived notes, respectively.
+  Search notes using a Python regular expression (ignores case by default, pass
+  --case-sensitive to disable). If --trashed or --archived is passed, then also
+  show trashed or archived notes, respectively.
 - `gkeep.py new [--list] <note title>`
-   Create a new note (option --list creates a list).
+  Create a new note (option --list creates a list).
 - `gkeep.py rm|delete <note>`
-   Delete note. Accepts multiple notes.
+  Delete note. Accepts multiple notes.
 - `gkeep.py archive|unarchive <note>`
-   Toggle archive status of note. Accepts multiple notes.
+  Toggle archive status of note. Accepts multiple notes.
 - `gkeep.py pin|unpin <note>`
-   Toggle pinned status of note. Accepts multiple notes.
+  Toggle pinned status of note. Accepts multiple notes.
 - `gkeep.py trash|untrash <note>`
-   Toggle trashed status of note. Accepts multiple notes.
--  `gkeep.py mv <note> <new_title>`
-   Rename note.
--  `gkeep.py cp|copy <note> <new_title>`
-   Copy note.
+  Toggle trashed status of note. Accepts multiple notes.
+- `gkeep.py mv|rename <note> <new_title>`
+  Rename note.
+- `gkeep.py cp|copy <note> <new_title>`
+  Copy note.
 - `gkeep.py add <note> <item> [...]`
-   Add checklist items (specified by sequence of strings) to note. A parent
-   item may be specified with --parent <parent item>.
+  Add checklist items (specified by sequence of strings) to note. A parent
+  item may be specified with --parent <parent item>.
 - `gkeep.py checkoff <note> <item> [...]`
-   Check off checklist items (specified by sequence of strings) from note.
+  Check off checklist items (specified by sequence of strings) from note.
 - `gkeep.py remove <note> <item> [...]`
-   Remove (delete) checklist items (specified by sequence of strings) from
-   note.
+  Remove (delete) checklist items (specified by sequence of strings) from
+  note.
 - `gkeep.py cat|dump <note>`
-   Print note contents to stdout. Accepts multiple notes.
+  Print note contents to stdout. Accepts multiple notes.
 - `gkeep.py edit [--list] <note>`
-   Edit note. If note doesn't exist, then create a new one (pass --list to
-   create a new list).
-- `gkeep.py pipe|read [--list] <note>`
-   Read stdin and pipe it to the specified note (overwrite by default). If note
-   is already a list, then interpret lines as items (input can also be formatted
-   similarly to output from cat). If note does not exist, then create it. Pass
-   --list to create a new list, and --append to append input to the note.
+  Edit note. If note doesn't exist, then create a new one (pass --list to
+  create a new list).
+- `gkeep.py pipe|read [--append] [--list] <note>`
+  Read stdin and pipe it to the specified note (overwrite by default). If note
+  is already a list, then interpret lines as items (input can also be formatted
+  similarly to output from cat). If note does not exist, then create it. Pass
+  --list to create a new list, and --append to append input to the note.
 
 #### Searching notes
 ```sh
@@ -146,3 +146,10 @@ given below.
 Multiline items and comments (lines beginning with whitespace followed by `#`)
 are supported and preserved in the note. Saving the file updates the checklist
 in Google Keep.
+
+#### Piping stdin
+```sh
+date | gkeep.py pipe "Last Updated" # overwrite text note
+cat groceries.txt | gkeep.py pipe --list "Groceries" # create/overwrite checklist note
+echo "Buy coffee" | gkeep.py pipe --append "Groceries" # append new line/item
+```
