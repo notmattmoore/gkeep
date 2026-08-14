@@ -45,7 +45,7 @@ def error_and_exit(msg, exit_code=1): # {{{1
 #----------------------------------------------------------------------------}}}1
 
 def notes_find(query, trashed=False): # {{{
-  """Return array with all non-trashed notes with title $query or id $query. Pass
+  """Return list with all non-trashed notes with title $query or id $query. Pass
   trashed=True to include trashed notes as well."""
 
   if trashed:
@@ -116,9 +116,9 @@ def ls(r='', re_flags=re.IGNORECASE, trashed=False, archived=False):  # {{{
 #----------------------------------------------------------------------------}}}
 def find(r, re_flags=re.IGNORECASE, trashed=False, archived=False): # {{{
   """Find notes matching regular expression r (case insensitive by default). Returns
-  an array of dictionaries,
+  an list of dictionaries,
     [ {"note": n, "matches": [...]}, ... ],
-  where matches is a non-empty array containing strings describing the matches."""
+  where matches is a non-empty list containing strings describing the matches."""
 
   r = re.compile(r, re_flags)
 
@@ -171,7 +171,7 @@ def new(title, make_list=False):  # {{{
 def rm(note_spec):  # {{{
   """Delete the note with the given title or ID."""
 
-  note = note_get(note_spec)
+  note = note_get(note_spec, trashed=True)
   note.delete()
   return note
 #----------------------------------------------------------------------------}}}
@@ -292,7 +292,7 @@ def remove(note_spec, item, delete=True): # {{{
 #----------------------------------------------------------------------------}}}
 
 def format_list(items, prefix='', seen=None): # {{{
-  """Recursively format the array items (each element should have a element.subitems
+  """Recursively format the list items (each element should have a subitems
   attribute, which is a list). An example of the formatting is given below.
     [ ] A
       [ ] B
@@ -384,21 +384,21 @@ def _parse_list_recurse(item_lines, i=0, indent=0): # {{{
       i += 1
     # Otherwise, the line must be more indented than the current list and so
     # represents a sublist of the previous list item. In this case we recurse and use
-    # the result as the children of the previous item. The children array must be
+    # the result as the children of the previous item. The children list must be
     # added to (not replaced) in order to handle inconsistent indentation.
     else:
       (c, i) = _parse_list_recurse(item_lines, i=i, indent=I.end())
-      if len(items) == 0: # first line is indented, which is a mal-formed list
-        error_and_exit(f"mal-formed list line '{line}'")
+      if len(items) == 0: # first line is indented, which is a malformed list
+        error_and_exit(f"malformed list line '{line}'")
       items[-1]["children"].extend(c)
 
   return (items, i)
 #----------------------------------------------------------------------------}}}
 def parse_list(items_formatted):  # {{{
   """Parse the string items_formatted (output from format_list()) to reconstruct the
-  list. Returns an array of dictionaries of the form
+  list. Returns an list of dictionaries of the form
     [{"text": <item text>, "children": [...], "checked": <bool>}, ...],
-  where the "children" array is of the same format as the overall array. Comments are
+  where the "children" list is of the same format as the overall list. Comments are
   supported in the items_formatted string by having the line start with whitespace
   followed by a #. Multi-line entries are also supported."""
 
@@ -429,14 +429,14 @@ def parse_list(items_formatted):  # {{{
     else:  # bad formatting...
       error_and_exit(f"list\n--\n{items_formatted}\n--\nis incorrectly formatted.")
 
-  # recursively process the array of lines and return
+  # recursively process the list of lines and return
   items, _ = _parse_list_recurse(item_lines)
   return items
 #----------------------------------------------------------------------------}}}
 def list_replace(note, items_new, recursed=False): # {{{
-  """Replace the note's items with the new items. items_new is an array of the form
+  """Replace the note's items with the new items. items_new is an list of the form
   described in parse_list(). Returns the modified note unless called recursively. If
-  called recursively, then do not delete existing items and return an array of the
+  called recursively, then do not delete existing items and return an list of the
   list items."""
 
   if not recursed:
