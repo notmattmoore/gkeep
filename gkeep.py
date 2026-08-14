@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 __description__ = "command-line interface to Google Keep"
-__version__ = "2026-08-13"
+__version__ = "2026-08-14"
 
 CONFIG_FILE = "~/.binrc/gkeep.toml"
 CONFIG_FILE_ALT = "~/.config/gkeep.toml"
@@ -124,9 +124,8 @@ def find(r, re_flags=re.IGNORECASE, trashed=False, archived=False): # {{{
 
   results = []
   for n in KEEP.all():
-    if n.trashed and not trashed:
-      continue
-    if n.archived and not archived:
+    is_visible = not (n.trashed or n.archived) or (n.trashed and trashed) or (n.archived and archived)
+    if not is_visible:
       continue
 
     # store results in a dict containing the note and information about the matches.
@@ -245,9 +244,7 @@ def find_list_item(note, item, deleted=False, checked=False): # {{{
 
   for i in note.items:
     if i.text == item:
-      if not (i.deleted or i.checked):
-        return i
-      elif (i.deleted and deleted) or (i.checked and checked):
+      if (not i.deleted or deleted) and (not i.checked or checked):
         return i
   return None
 #----------------------------------------------------------------------------}}}
@@ -312,7 +309,7 @@ def format_list(items, prefix='', seen=None): # {{{
         line item
     # multi
     # line comment
-  Comments are supported in the form of a list item whose text begins with whitesace
+  Comments are supported in the form of a list item whose text begins with whitespace
   followed by '#'. Google Keep currently only supports rather dumb nesting of list
   items with the element.indented boolean, but this function allows for arbitrarily
   deep sublists."""
@@ -391,6 +388,8 @@ def _parse_list_recurse(item_lines, i=0, indent=0): # {{{
     # added to (not replaced) in order to handle inconsistent indentation.
     else:
       (c, i) = _parse_list_recurse(item_lines, i=i, indent=I.end())
+      if len(items) == 0: # first line is indented, which is a mal-formed list
+        error_and_exit(f"mal-formed list line '{line}'")
       items[-1]["children"].extend(c)
 
   return (items, i)
@@ -422,7 +421,7 @@ def parse_list(items_formatted):  # {{{
           item_lines.append(line.rstrip())
       else:
         item_lines.append(line.rstrip())
-    elif len(item_lines) > 0:  # muli-line entry
+    elif len(item_lines) > 0:  # multi-line entry
       # Remove leading and trailing whitespace.
       item_lines[-1] += f" {line.strip()}"
     elif line.strip() == '':  # skip blank lines
@@ -628,7 +627,7 @@ if __name__ == "__main__":  # {{{1
   )
   parser_trash.set_defaults(command="trash")
   parser_trash.add_argument(
-    "note_specs",  nargs='+', help="The title or ID of the note(s) to pin/unpin."
+    "note_specs",  nargs='+', help="The title or ID of the note(s) to trash/untrash."
   )
 
   # mv | rename
@@ -714,7 +713,7 @@ if __name__ == "__main__":  # {{{1
   parser_pipe.set_defaults(command="pipe")
   parser_pipe.add_argument("--append", action="store_true")
   parser_pipe.add_argument("--list", action="store_true")
-  parser_pipe.add_argument("note_spec", help="The title or ID of the note to edit.")
+  parser_pipe.add_argument("note_spec", help="The title or ID of the note to write to.")
 
   args = parser.parse_args()
   #----------------------------------------------------------------------------}}}
